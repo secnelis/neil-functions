@@ -1,0 +1,10 @@
+{
+    "name": "secnelis/neil-functions",
+    "description": "PHP utility functions used by Neil",
+    "keywords": ["neil"],
+    "license": "MIT",
+    "type": "library",
+    "autoload": {
+        "files": ["src/functions.php"]
+    }
+}
