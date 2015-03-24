@@ -51,9 +51,9 @@ if ( ! defined('NEIL_FUNCTIONS')) {
 		if ($attachment) {
 			header('Content-Disposition: attachment; filename="'.rawurlencode($name).'"; filename*=utf-8\'\''.rawurlencode($name));
 		}
-		$fp = fopen($file, 'r');
-		echo fread($fp, $size);
-		fclose($fp);
+		ob_clean();
+		flush();
+		readfile($file);
 	}
 
 	function ie($version = false) {
