@@ -81,6 +81,11 @@ if ( ! defined('NEIL_FUNCTIONS')) {
 	  return strpos($ua, 'mobile') !== false;
 	}
 
+	function wx() {
+	  $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+	  return strpos($ua, 'micromessenger') !== false;
+	}
+
 	function ip() {
 		$ip = null;
 		if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
