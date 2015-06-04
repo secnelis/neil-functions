@@ -28,12 +28,33 @@ if ( ! defined('NEIL_FUNCTIONS')) {
 		return json_encode($data);
 	}
 
+	function ie($version = false) {
+		if (empty($_SERVER['HTTP_USER_AGENT'])) return false;
+		$agent = $_SERVER['HTTP_USER_AGENT'];
+		if ($version == false) {
+			return strpos($agent, 'MSIE') !== false;
+		} else {
+			if (is_array($version)) {
+				foreach ($version as $v) {
+					$v = (int)$v;
+					if (strpos($agent, "MSIE {$v}.0") !== false) {
+						return true;
+					}
+				}
+				return false;
+			} else {
+				$version = (int)$version;
+				return strpos($agent, "MSIE {$version}.0") !== false;
+			}
+		}
+	}
+
 	function down($file, $name = null, $attachment = true, $mimeType = null, $headers = []) {
 		file_exists($file) or die;
 		$size = filesize($file);
 		$name = $name ?: basename($file);
 		header('Cache-Control: public, must-revalidate, max-age=0');
-		if (strstr($_SERVER["HTTP_USER_AGENT"], "MSIE") == false) {
+		if ( ! ie()) {
 			header("Cache-Control: no-cache");
 			header("Pragma: no-cache");
 		}
@@ -56,32 +77,14 @@ if ( ! defined('NEIL_FUNCTIONS')) {
 		readfile($file);
 	}
 
-	function ie($version = false) {
-		$agent = $_SERVER['HTTP_USER_AGENT'];
-		if ($version == false) {
-			return strpos($agent, 'MSIE') !== false;
-		} else {
-			if (is_array($version)) {
-				foreach ($version as $v) {
-					$v = (int)$v;
-					if (strpos($agent, "MSIE {$v}.0") !== false) {
-						return true;
-					}
-				}
-				return false;
-			} else {
-				$version = (int)$version;
-				return strpos($agent, "MSIE {$version}.0") !== false;
-			}
-		}
-	}
-
 	function mobile() {
+		if (empty($_SERVER['HTTP_USER_AGENT'])) return false;
 	  $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
 	  return strpos($ua, 'mobile') !== false;
 	}
 
 	function wx() {
+		if (empty($_SERVER['HTTP_USER_AGENT'])) return false;
 	  $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
 	  return strpos($ua, 'micromessenger') !== false;
 	}
@@ -134,6 +137,15 @@ if ( ! defined('NEIL_FUNCTIONS')) {
 		curl_exec($ch);
 		curl_close($ch);
 	}
+
+  function copyfile($srcfile, $dstfile) {
+    if ( ! file_exists($srcfile)) return;
+    $dstdir = pathinfo($dstfile, PATHINFO_DIRNAME);
+    if ( ! file_exists($dstdir)) {
+      @mkdir($dstdir, 0777, true);
+    }
+    copy($srcfile, $dstfile);
+  }
 
 	function copydir($src, $dst) {  // 原目录，复制到的目录
 		if ( ! file_exists($src)) return false;
